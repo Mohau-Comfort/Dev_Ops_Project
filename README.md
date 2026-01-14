@@ -1,7 +1,7 @@
 ﻿# 🚀 DevOps Crash Course Project
 
 ## 📌 Overview
-This repository contains my **first DevOps project**, created while following a hands-on DevOps crash course.  
+This repository contains my **DevOps project**, created while following a hands-on DevOps crash course.  
 The goal of this project is to **learn and apply core DevOps concepts** by working with a full-stack application and automating development, deployment, and operations workflows.
 
 This project focuses on understanding **how modern DevOps practices are used in real-world systems**, rather than just theory.
