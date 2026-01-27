@@ -1,0 +1,21 @@
+{
+  "name": "dev_ops_project",
+  "version": "1.0.0",
+  "description": "This repository contains my **DevOps project**, created while following a hands-on DevOps crash course.  \r The goal of this project is to **learn and apply core DevOps concepts** by working with a full-stack application and automating development, deployment, and operations workflows.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mohau-Comfort/Dev_Ops_Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mohau-Comfort/Dev_Ops_Project/issues"
+  },
+  "homepage": "https://github.com/Mohau-Comfort/Dev_Ops_Project#readme"
+}
