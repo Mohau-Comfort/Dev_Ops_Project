@@ -5,10 +5,11 @@
  */
 
 import jwt from 'jsonwebtoken';
-import { logger } from '#config/logger.js';
+import logger from '#config/logger.js';
 
 /** @constant {string} JWT_SECRET - Secret key for signing tokens */
-const JWT_SECRET = process.env.JWT_SECRET || 'your-default-secret-please-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || 'your-default-secret-please-change-in-production';
 
 /** @constant {string} JWT_EXPIRES_IN - Token expiration duration */
 const JWT_EXPIRES_IN = '1d';
@@ -27,7 +28,7 @@ export const jwttoken = {
    * @returns {string} Signed JWT string
    * @throws {Error} If token signing fails
    */
-  sign: (payload) => {
+  sign: payload => {
     try {
       return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
     } catch (error) {
@@ -42,7 +43,7 @@ export const jwttoken = {
    * @returns {Object} Decoded token payload
    * @throws {Error} If token is invalid or expired
    */
-  verify: (token) => {
+  verify: token => {
     try {
       return jwt.verify(token, JWT_SECRET);
     } catch (error) {

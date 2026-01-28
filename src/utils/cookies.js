@@ -10,6 +10,18 @@
  */
 export const cookies = {
   /**
+   * Returns default secure cookie options
+   * @returns {Object} Default cookie options
+   */
+  getOptions: () => ({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    path: '/',
+  }),
+
+  /**
    * Sets a cookie on the response
    * @param {Object} res - Express response object
    * @param {string} name - Cookie name

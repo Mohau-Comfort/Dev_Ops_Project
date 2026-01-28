@@ -23,7 +23,8 @@ export const signUpSchema = z.object({
   email: z
     .email('Invalid email address')
     .max(255, 'Email must be at most 255 characters long')
-    .toLowerCase.trim(),
+    .toLowerCase()
+    .trim(),
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters long')
