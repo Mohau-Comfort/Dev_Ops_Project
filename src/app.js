@@ -1,11 +1,49 @@
+/**
+ * @fileoverview Express Application Configuration
+ * @description Configures Express middleware stack and route handlers.
+ * Implements security best practices using Helmet, CORS, and structured logging.
+ */
+
 import express from 'express';
+import logger from '#config/logger.js';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import authRoutes from '#routes/authRoutes.js';
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+// Security middleware - sets various HTTP headers for protection
+app.use(helmet());
 
+// CORS middleware - enables cross-origin resource sharing
+app.use(cors());
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Cookie parsing middleware
+app.use(cookieParser());
+
+// HTTP request logging - integrates Morgan with Winston logger
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim()),
+  },
+}));
+
+/**
+ * Root endpoint handler
+ * @route GET /
+ * @returns {string} Welcome message
+ */
 app.get('/', (req, res) => {
+  logger.info('Root endpoint accessed');
   res.status(200).send('Hello from Acquisitions Service!');
 });
+
+app.use('/api/auth', authRoutes);
 
 export default app;

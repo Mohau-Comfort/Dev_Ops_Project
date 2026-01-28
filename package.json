@@ -3,6 +3,16 @@
   "version": "1.0.0",
   "description": "This repository contains my **DevOps project**, created while following a hands-on DevOps crash course.  \r The goal of this project is to **learn and apply core DevOps concepts** by working with a full-stack application and automating development, deployment, and operations workflows.",
   "main": "index.js",
+  "imports": {
+    "#config/*.js": "./src/config/*.js",
+    "#controllers/*.js": "./src/controllers/*.js",
+    "#middleware/*.js": "./src/middleware/*.js",
+    "#models/*.js": "./src/models/*.js",
+    "#routes/*.js": "./src/routes/*.js",
+    "#services/*.js": "./src/services/*.js",
+    "#utils/*.js": "./src/utils/*.js",
+    "#validations/*.js": "./src/validations/*.js"
+  },
   "scripts": {
     "dev": "node --watch src/index.js",
     "lint": "eslint .",
@@ -27,9 +37,14 @@
   "homepage": "https://github.com/Mohau-Comfort/Dev_Ops_Project#readme",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
