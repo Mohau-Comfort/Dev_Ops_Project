@@ -10,7 +10,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import authRoutes from '#routes/authRoutes.js';
+import authRoutes from '#routes/auth.routes.js';
 
 const app = express();
 
@@ -42,6 +42,14 @@ app.use(morgan('combined', {
 app.get('/', (req, res) => {
   logger.info('Root endpoint accessed');
   res.status(200).send('Hello from Acquisitions Service!');
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString(), uptime: process.uptime() });
+});
+
+app.get('/api', (req, res) => {
+  res.status(200).send('API is running');
 });
 
 app.use('/api/auth', authRoutes);
