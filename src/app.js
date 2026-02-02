@@ -14,6 +14,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from '#config/swagger.js';
 import authRoutes from '#routes/auth.routes.js';
 import securityMiddleware from '#middleware/security.middleware.js';
+import usersRoutes from '#routes/users.routes.js'; 
 
 const app = express();
 
@@ -81,4 +82,6 @@ app.get('/api', (req, res) => {
 // Authentication routes - protected by security middleware
 app.use('/api/auth', authRoutes);
 
+//User CRUD routes
+app.use('/api/users', usersRoutes);
 export default app;
