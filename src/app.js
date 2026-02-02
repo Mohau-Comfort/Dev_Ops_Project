@@ -21,8 +21,11 @@ const app = express();
 // Security middleware - sets various HTTP headers for protection
 app.use(helmet());
 
-// CORS middleware - enables cross-origin resource sharing
-app.use(cors());
+// CORS middleware - enables cross-origin resource sharing with credentials
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
 
 // Body parsing middleware
 app.use(express.json());

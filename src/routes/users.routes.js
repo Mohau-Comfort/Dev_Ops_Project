@@ -11,9 +11,13 @@ import {
   updateUser,
   deleteUser,
 } from '#controllers/users.controller.js';
+import { authenticate } from '#middleware/auth.middleware.js';
 import express from 'express';
 
 const router = express.Router();
+
+// Apply authentication middleware to all user routes
+router.use(authenticate);
 
 /**
  * @route GET /api/users
