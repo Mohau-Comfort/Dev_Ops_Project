@@ -13,6 +13,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from '#config/swagger.js';
 import authRoutes from '#routes/auth.routes.js';
+import securityMiddleware from '#middleware/security.middleware.js';
 
 const app = express();
 
@@ -38,6 +39,26 @@ app.use(
   })
 );
 
+// Swagger API documentation - served before security middleware to avoid rate limiting static assets
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+/**
+ * Health check endpoint - excluded from rate limiting for monitoring services
+ * @route GET /health
+ * @returns {Object} Health status with timestamp and uptime
+ */
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
+// Apply Arcjet security middleware to all routes below this point
+// This includes bot detection, attack prevention (shield), and role-based rate limiting
+app.use(securityMiddleware);
+
 /**
  * Root endpoint handler
  * @route GET /
@@ -48,23 +69,16 @@ app.get('/', (req, res) => {
   res.status(200).send('Hello from Acquisitions Service!');
 });
 
-app.get('/health', (req, res) => {
-  res
-    .status(200)
-    .json({
-      status: 'OK',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-    });
-});
-
+/**
+ * API status endpoint
+ * @route GET /api
+ * @returns {string} API status message
+ */
 app.get('/api', (req, res) => {
   res.status(200).send('API is running');
 });
 
+// Authentication routes - protected by security middleware
 app.use('/api/auth', authRoutes);
-
-// Swagger API documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

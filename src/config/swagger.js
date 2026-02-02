@@ -7,7 +7,7 @@
 export const swaggerDocument = {
   openapi: '3.0.0',
   info: {
-    title: 'DevOps Project API',
+    title: 'Acquisitions Dashboard API',
     version: '1.0.0',
     description: 'RESTful API for user authentication and management',
     contact: {
