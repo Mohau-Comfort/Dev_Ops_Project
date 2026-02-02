@@ -1,0 +1,74 @@
+# ============================================
+# Docker Compose - Development Environment
+# Uses Neon Local for local database development
+# ============================================
+
+services:
+  # -----------------------------------------
+  # Neon Local - Local PostgreSQL Proxy
+  # Creates ephemeral branches for development
+  # -----------------------------------------
+  neon-local:
+    image: neondatabase/neon_local:latest
+    container_name: neon-local-dev
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env.development
+    volumes:
+      # Persist branch state across container restarts
+      - ./.neon_local:/tmp/.neon_local
+      # Git HEAD for branch naming (optional)
+      - ./.git/HEAD:/tmp/.git/HEAD:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432", "-U", "neon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - dev-network
+
+  # -----------------------------------------
+  # Application Service
+  # -----------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: devops-app-dev
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.development
+    environment:
+      # Override DATABASE_URL to use Docker network hostname
+      DATABASE_URL: postgres://neon:npg@neon-local:5432/neondb?sslmode=require
+    volumes:
+      # Mount source code for hot reloading
+      - ./src:/app/src:ro
+      - ./drizzle:/app/drizzle:ro
+      # Persist logs
+      - ./logs:/app/logs
+      # Don't mount node_modules (use container's)
+      - /app/node_modules
+    depends_on:
+      neon-local:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - dev-network
+    restart: unless-stopped
+
+networks:
+  dev-network:
+    driver: bridge
+
+volumes:
+  neon-local-data:

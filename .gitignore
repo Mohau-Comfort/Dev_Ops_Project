@@ -95,6 +95,12 @@ temp/
 *.sqlite3
 *.db
 
+# Neon Local
+.neon_local/
+
+# Docker
+docker-compose.override.yml
+
 # Uploads and user content
 uploads/
 public/uploads/

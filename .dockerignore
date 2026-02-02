@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (secrets should be injected at runtime)
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# Docker files (not needed in container)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs (will be created at runtime)
+logs/
+*.log
+
+# Testing and coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# Neon Local data
+.neon_local/
+
+# Drizzle migrations (include these for production)
+# drizzle/
+
+# Temporary files
+tmp/
+temp/
+.tmp/

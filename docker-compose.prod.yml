@@ -1,0 +1,48 @@
+# ============================================
+# Docker Compose - Production Environment
+# Connects to Neon Cloud Database
+# ============================================
+
+services:
+  # -----------------------------------------
+  # Application Service - Production
+  # -----------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: devops-app-prod
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.production
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: always
+    networks:
+      - prod-network
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs
+
+networks:
+  prod-network:
+    driver: bridge
