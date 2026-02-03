@@ -4,6 +4,7 @@
 # ============================================
 
 name: Docker Build and Push
+run-name: Docker Build and Push
 
 on:
   push:
