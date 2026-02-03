@@ -12,7 +12,10 @@ import {
   updateUser as updateUserService,
   deleteUser as deleteUserService,
 } from '#services/users.services.js';
-import { userIdSchema, updateUserSchema } from '#validations/users.validation.js';
+import {
+  userIdSchema,
+  updateUserSchema,
+} from '#validations/users.validation.js';
 
 /**
  * Fetches all users from the database
@@ -34,7 +37,6 @@ export const fetchAllUsers = async (req, res, next) => {
       users: allUsers,
       count: allUsers.length,
     });
-
   } catch (error) {
     logger.error(error);
     next(error);
@@ -57,7 +59,7 @@ export const fetchUserById = async (req, res, next) => {
     if (!validation.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: validation.error.errors.map((e) => e.message).join(', '),
+        details: validation.error.errors.map(e => e.message).join(', '),
       });
     }
 
@@ -75,7 +77,6 @@ export const fetchUserById = async (req, res, next) => {
       message: 'User fetched successfully',
       user,
     });
-
   } catch (error) {
     logger.error(error);
     next(error);
@@ -101,7 +102,7 @@ export const updateUser = async (req, res, next) => {
     if (!idValidation.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: idValidation.error.errors.map((e) => e.message).join(', '),
+        details: idValidation.error.errors.map(e => e.message).join(', '),
       });
     }
 
@@ -109,7 +110,7 @@ export const updateUser = async (req, res, next) => {
     if (!bodyValidation.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: bodyValidation.error.errors.map((e) => e.message).join(', '),
+        details: bodyValidation.error.errors.map(e => e.message).join(', '),
       });
     }
 
@@ -119,7 +120,9 @@ export const updateUser = async (req, res, next) => {
 
     // Check if user is trying to update someone else's profile
     if (currentUser.id !== id && currentUser.role !== 'admin') {
-      logger.warn(`User ${currentUser.id} attempted to update user ${id} without permission`);
+      logger.warn(
+        `User ${currentUser.id} attempted to update user ${id} without permission`
+      );
       return res.status(403).json({
         message: 'You can only update your own profile',
       });
@@ -127,7 +130,9 @@ export const updateUser = async (req, res, next) => {
 
     // Only admins can change roles
     if (updates.role && currentUser.role !== 'admin') {
-      logger.warn(`User ${currentUser.id} attempted to change role without admin privileges`);
+      logger.warn(
+        `User ${currentUser.id} attempted to change role without admin privileges`
+      );
       return res.status(403).json({
         message: 'Only administrators can change user roles',
       });
@@ -140,7 +145,6 @@ export const updateUser = async (req, res, next) => {
       message: 'User updated successfully',
       user: updatedUser,
     });
-
   } catch (error) {
     if (error.statusCode === 404) {
       return res.status(404).json({
@@ -169,7 +173,7 @@ export const deleteUser = async (req, res, next) => {
     if (!validation.success) {
       return res.status(400).json({
         error: 'Validation failed',
-        details: validation.error.errors.map((e) => e.message).join(', '),
+        details: validation.error.errors.map(e => e.message).join(', '),
       });
     }
 
@@ -178,7 +182,9 @@ export const deleteUser = async (req, res, next) => {
 
     // Only admins can delete users, or users can delete themselves
     if (currentUser.id !== id && currentUser.role !== 'admin') {
-      logger.warn(`User ${currentUser.id} attempted to delete user ${id} without permission`);
+      logger.warn(
+        `User ${currentUser.id} attempted to delete user ${id} without permission`
+      );
       return res.status(403).json({
         message: 'You do not have permission to delete this user',
       });
@@ -191,7 +197,6 @@ export const deleteUser = async (req, res, next) => {
       message: 'User deleted successfully',
       user: deletedUser,
     });
-
   } catch (error) {
     if (error.statusCode === 404) {
       return res.status(404).json({

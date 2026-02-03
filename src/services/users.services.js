@@ -33,15 +33,16 @@ import { eq } from 'drizzle-orm';
  */
 export const getAllUsers = async () => {
   try {
-    return await db.select({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    }).from(users);
-
+    return await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
+      .from(users);
   } catch (error) {
     logger.error('Error fetching all users:', error);
     throw error;
@@ -59,21 +60,21 @@ export const getAllUsers = async () => {
  * const user = await getUserById(1);
  * // Returns: { id: 1, name: 'John', email: 'john@example.com', ... }
  */
-export const getUserById = async (id) => {
+export const getUserById = async id => {
   try {
-    const result = await db.select({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    })
+    const result = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
       .from(users)
       .where(eq(users.id, id));
 
     return result[0] || null;
-
   } catch (error) {
     logger.error(`Error fetching user with id ${id}:`, error);
     throw error;
@@ -103,7 +104,8 @@ export const updateUser = async (id, updates) => {
       throw error;
     }
 
-    const result = await db.update(users)
+    const result = await db
+      .update(users)
       .set({
         ...updates,
         updatedAt: new Date(),
@@ -119,7 +121,6 @@ export const updateUser = async (id, updates) => {
       });
 
     return result[0];
-
   } catch (error) {
     logger.error(`Error updating user with id ${id}:`, error);
     throw error;
@@ -136,7 +137,7 @@ export const updateUser = async (id, updates) => {
  * @example
  * const deleted = await deleteUser(1);
  */
-export const deleteUser = async (id) => {
+export const deleteUser = async id => {
   try {
     const existingUser = await getUserById(id);
     if (!existingUser) {
@@ -145,19 +146,16 @@ export const deleteUser = async (id) => {
       throw error;
     }
 
-    const result = await db.delete(users)
-      .where(eq(users.id, id))
-      .returning({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-      });
+    const result = await db.delete(users).where(eq(users.id, id)).returning({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    });
 
     return result[0];
-
   } catch (error) {
     logger.error(`Error deleting user with id ${id}:`, error);
     throw error;

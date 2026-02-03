@@ -41,7 +41,9 @@ function main() {
   // Check if .env.production exists
   if (!existsSync('.env.production')) {
     log('❌ Error: .env.production file not found!');
-    log('   Please copy .env.example to .env.production and update with your production credentials.');
+    log(
+      '   Please copy .env.example to .env.production and update with your production credentials.'
+    );
     process.exit(1);
   }
 
@@ -60,7 +62,9 @@ function main() {
   // Validate DATABASE_URL points to Neon Cloud
   if (!process.env.DATABASE_URL.includes('neon.tech')) {
     log('⚠️  Warning: DATABASE_URL does not appear to be a Neon Cloud URL.');
-    log('   Expected format: postgres://user:pass@ep-xxx.region.aws.neon.tech/dbname');
+    log(
+      '   Expected format: postgres://user:pass@ep-xxx.region.aws.neon.tech/dbname'
+    );
     log('');
   }
 
@@ -100,10 +104,15 @@ function main() {
 
   let healthy = false;
   for (let i = 0; i < 30; i++) {
-    const result = execSilent('docker compose -f docker-compose.prod.yml ps --format json');
+    const result = execSilent(
+      'docker compose -f docker-compose.prod.yml ps --format json'
+    );
     if (result) {
       try {
-        const output = execSync('docker compose -f docker-compose.prod.yml ps', { encoding: 'utf-8' });
+        const output = execSync(
+          'docker compose -f docker-compose.prod.yml ps',
+          { encoding: 'utf-8' }
+        );
         if (output.includes('healthy') || output.includes('running')) {
           healthy = true;
           break;
@@ -112,7 +121,10 @@ function main() {
         // Continue waiting
       }
     }
-    execSync(isWindows ? 'timeout /t 2 /nobreak >nul' : 'sleep 2', { stdio: 'pipe', shell: true });
+    execSync(isWindows ? 'timeout /t 2 /nobreak >nul' : 'sleep 2', {
+      stdio: 'pipe',
+      shell: true,
+    });
     log(`   Checking... (${(i + 1) * 2}s)`);
   }
 

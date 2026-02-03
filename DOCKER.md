@@ -117,6 +117,7 @@ docker compose -f docker-compose.dev.yml up --build --force-recreate
 ### Hot Reloading
 
 The development setup mounts your source code as a volume, enabling hot reloading:
+
 - Changes to `src/` are automatically detected
 - The app restarts when files change
 - No need to rebuild the container for code changes
@@ -224,15 +225,15 @@ The production configuration includes:
 
 ### Development vs Production
 
-| Variable | Development | Production |
-|----------|------------|------------|
-| `NODE_ENV` | `development` | `production` |
-| `DATABASE_URL` | `postgres://neon:npg@neon-local:5432/neondb` | `postgres://...neon.tech/...` |
-| `NEON_API_KEY` | Required | Not needed |
-| `NEON_PROJECT_ID` | Required | Not needed |
-| `ARCJET_KEY` | Optional | Required |
-| `JWT_SECRET` | Dev default | Strong secret required |
-| `LOG_LEVEL` | `debug` | `info` |
+| Variable          | Development                                  | Production                    |
+| ----------------- | -------------------------------------------- | ----------------------------- |
+| `NODE_ENV`        | `development`                                | `production`                  |
+| `DATABASE_URL`    | `postgres://neon:npg@neon-local:5432/neondb` | `postgres://...neon.tech/...` |
+| `NEON_API_KEY`    | Required                                     | Not needed                    |
+| `NEON_PROJECT_ID` | Required                                     | Not needed                    |
+| `ARCJET_KEY`      | Optional                                     | Required                      |
+| `JWT_SECRET`      | Dev default                                  | Strong secret required        |
+| `LOG_LEVEL`       | `debug`                                      | `info`                        |
 
 ### How DATABASE_URL Switches
 
@@ -257,6 +258,7 @@ if (isNeonLocal) {
 ### Neon Local won't start
 
 1. Check your API key is valid:
+
    ```bash
    docker compose -f docker-compose.dev.yml logs neon-local
    ```
@@ -270,6 +272,7 @@ if (isNeonLocal) {
 ### Database connection refused
 
 1. Wait for Neon Local to be healthy:
+
    ```bash
    docker compose -f docker-compose.dev.yml ps
    # neon-local should show "healthy"
@@ -283,6 +286,7 @@ if (isNeonLocal) {
 ### Hot reload not working
 
 1. Ensure volumes are mounted correctly:
+
    ```bash
    docker compose -f docker-compose.dev.yml exec app ls -la /app/src
    ```
@@ -292,6 +296,7 @@ if (isNeonLocal) {
 ### Production health check failing
 
 1. Check application logs:
+
    ```bash
    docker compose -f docker-compose.prod.yml logs app
    ```

@@ -40,7 +40,9 @@ async function main() {
   // Check if .env.development exists
   if (!existsSync('.env.development')) {
     log('❌ Error: .env.development file not found!');
-    log('   Please copy .env.example to .env.development and update with your Neon credentials.');
+    log(
+      '   Please copy .env.example to .env.development and update with your Neon credentials.'
+    );
     process.exit(1);
   }
 
@@ -78,7 +80,11 @@ async function main() {
   let elapsed = 0;
 
   while (elapsed < timeout) {
-    if (execSilent('docker compose -f docker-compose.dev.yml exec -T neon-local pg_isready -h localhost -p 5432 -U neon')) {
+    if (
+      execSilent(
+        'docker compose -f docker-compose.dev.yml exec -T neon-local pg_isready -h localhost -p 5432 -U neon'
+      )
+    ) {
       break;
     }
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -97,7 +103,9 @@ async function main() {
   // Run database migrations
   log('');
   log('📜 Running database migrations...');
-  exec('docker compose -f docker-compose.dev.yml run --rm app npm run db:migrate');
+  exec(
+    'docker compose -f docker-compose.dev.yml run --rm app npm run db:migrate'
+  );
 
   // Start all services
   log('');
@@ -114,12 +122,16 @@ async function main() {
   log('');
 
   // Start all services and attach to logs
-  const child = spawn('docker', ['compose', '-f', 'docker-compose.dev.yml', 'up', '--build'], {
-    stdio: 'inherit',
-    shell: isWindows
-  });
+  const child = spawn(
+    'docker',
+    ['compose', '-f', 'docker-compose.dev.yml', 'up', '--build'],
+    {
+      stdio: 'inherit',
+      shell: isWindows,
+    }
+  );
 
-  child.on('close', (code) => {
+  child.on('close', code => {
     process.exit(code);
   });
 }

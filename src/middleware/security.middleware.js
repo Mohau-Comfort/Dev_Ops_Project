@@ -16,9 +16,21 @@ import { slidingWindow } from '@arcjet/node';
  * - Admin: Elevated access for administrative operations
  */
 const RATE_LIMITS = {
-  guest: { max: 100, interval: '1m', message: 'Guest rate limit exceeded. Please sign in for higher limits.' },
-  user: { max: 500, interval: '1m', message: 'Rate limit exceeded. Please slow down.' },
-  admin: { max: 1000, interval: '1m', message: 'Admin rate limit exceeded. Please slow down.' },
+  guest: {
+    max: 100,
+    interval: '1m',
+    message: 'Guest rate limit exceeded. Please sign in for higher limits.',
+  },
+  user: {
+    max: 500,
+    interval: '1m',
+    message: 'Rate limit exceeded. Please slow down.',
+  },
+  admin: {
+    max: 1000,
+    interval: '1m',
+    message: 'Admin rate limit exceeded. Please slow down.',
+  },
 };
 
 /**

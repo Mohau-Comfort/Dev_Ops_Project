@@ -14,7 +14,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from '#config/swagger.js';
 import authRoutes from '#routes/auth.routes.js';
 import securityMiddleware from '#middleware/security.middleware.js';
-import usersRoutes from '#routes/users.routes.js'; 
+import usersRoutes from '#routes/users.routes.js';
 import { jwttoken } from '#utils/jwt.js';
 import { cookies } from '#utils/cookies.js';
 
@@ -24,10 +24,12 @@ const app = express();
 app.use(helmet());
 
 // CORS middleware - enables cross-origin resource sharing with credentials
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 // Body parsing middleware
 app.use(express.json());

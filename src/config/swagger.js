@@ -292,7 +292,8 @@ export const swaggerDocument = {
       get: {
         tags: ['Users'],
         summary: 'Get all users',
-        description: 'Retrieves a list of all registered users with their basic information',
+        description:
+          'Retrieves a list of all registered users with their basic information',
         security: [
           {
             cookieAuth: [],
@@ -463,7 +464,8 @@ export const swaggerDocument = {
             },
           },
           403: {
-            description: 'Forbidden - Cannot update other users or change roles',
+            description:
+              'Forbidden - Cannot update other users or change roles',
             content: {
               'application/json': {
                 schema: {
