@@ -1,0 +1,112 @@
+# ============================================
+# Tests Workflow
+# Runs test suite and uploads coverage reports
+# ============================================
+
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: test
+      NODE_OPTIONS: --experimental-vm-modules
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        id: tests
+        run: npm test -- --ci --json --outputFile=test-results.json 2>&1 | tee test-output.txt
+        continue-on-error: true
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+      - name: Generate test summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f test-results.json ]; then
+            # Extract test counts from Jest JSON output
+            TOTAL=$(jq -r '.numTotalTests // 0' test-results.json 2>/dev/null || echo "0")
+            PASSED=$(jq -r '.numPassedTests // 0' test-results.json 2>/dev/null || echo "0")
+            FAILED=$(jq -r '.numFailedTests // 0' test-results.json 2>/dev/null || echo "0")
+            PENDING=$(jq -r '.numPendingTests // 0' test-results.json 2>/dev/null || echo "0")
+
+            echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total Tests | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pending | $PENDING |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "### Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            LINES=$(jq -r '.total.lines.pct // "N/A"' coverage/coverage-summary.json 2>/dev/null || echo "N/A")
+            STATEMENTS=$(jq -r '.total.statements.pct // "N/A"' coverage/coverage-summary.json 2>/dev/null || echo "N/A")
+            FUNCTIONS=$(jq -r '.total.functions.pct // "N/A"' coverage/coverage-summary.json 2>/dev/null || echo "N/A")
+            BRANCHES=$(jq -r '.total.branches.pct // "N/A"' coverage/coverage-summary.json 2>/dev/null || echo "N/A")
+
+            echo "| Metric | Coverage |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|----------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Lines | ${LINES}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Statements | ${STATEMENTS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Functions | ${FUNCTIONS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Branches | ${BRANCHES}% |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ steps.tests.outcome }}" == "failure" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Status: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Status: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Annotate test failures
+        if: steps.tests.outcome == 'failure'
+        run: |
+          echo "::error::Test suite failed. Check the test output for details."
+
+          if [ -f test-results.json ]; then
+            # Extract and annotate failed tests
+            jq -r '.testResults[]? | select(.status == "failed") | .assertionResults[]? | select(.status == "failed") | "::error file=\(.ancestorTitles[0] // "unknown"),title=\(.title // "Test Failed")::\(.failureMessages[0] // "Test failed")"' test-results.json 2>/dev/null || true
+          fi
+
+      - name: Fail workflow if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
